@@ -1,0 +1,62 @@
+<project>
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>fr.learner</groupId>
+	<artifactId>hellofluent</artifactId>
+	<packaging>jar</packaging>
+	<version>1.0</version>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+
+
+	<build>
+		<plugins>
+			<!-- ================================================================== -->
+			<!-- Plugin nous permettant d'avoir facilement un jar (self) executable -->
+			<!-- ================================================================== -->
+
+			<!-- ================================================ -->
+			<!-- Plugin nous permettant d'inclure un DOCKER BUILD -->
+			<!-- ================================================ -->
+			<plugin>
+				<groupId>com.spotify</groupId>
+				<artifactId>docker-maven-plugin</artifactId>
+				<version>0.4.13</version> <!-- Derniere version du plugin lors de mes test -->
+				<configuration>
+					<!-- Fixe le nom de l'image generee -->
+					<imageName>${project.name}_docker</imageName>
+					<!-- Indique our trouver le Dockerfile -->
+					<dockerDirectory>docker</dockerDirectory>
+					<!-- Donne l'acce au jar lors de la compilation -->
+					<resources>
+						<resource>
+							<targetPath>/</targetPath>
+							<directory>${project.build.directory}</directory>
+							<include>*.jar</include>
+						</resource>
+					</resources>
+					<!-- Assure la creation d'un tag "propre" avec la version -->
+					<imageTags>
+						<imageTag>${project.version}</imageTag>
+						<imageTag>latest</imageTag>
+					</imageTags>
+				</configuration>
+				<!-- On force ci-dessous l'execution du docker build sur un mvn package -->
+				<executions>
+					<execution>
+						<id>build-image</id>
+						<phase>package</phase>
+						<goals>
+							<goal>build</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+		</plugins>
+		<!-- // Fin des plugins -->
+	</build>
+</project>
+<!-- // [END footer] -->
